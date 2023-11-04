@@ -5,7 +5,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 public final class Reservation {
-    private DateTimeFormatter fmt1 = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+    private final DateTimeFormatter fmt1 = DateTimeFormatter.ofPattern("dd/MM/yyyy");
     private Integer roomNumber;
     private LocalDate checkin;
     private LocalDate checkout;
@@ -49,9 +49,17 @@ public final class Reservation {
        return d1.toDays();
     }
 
-    public void updateDates(LocalDate checkin, LocalDate checkout){
+    public String updateDates(LocalDate checkin, LocalDate checkout){
+        LocalDate now = LocalDate.now();
+        if (checkin.isBefore(now) || checkout.isBefore(now)){
+            return "Error in reservation: Reservation dates for update must be future dates";
+        }
+        if(!checkout.isAfter(checkin)){
+            return "Error in reservation: check-out date must be after check-in date";
+        }
         this.checkin = checkin;
         this.checkout = checkout;
+        return null;
     }
 
     @Override
