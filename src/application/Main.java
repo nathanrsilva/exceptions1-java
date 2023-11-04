@@ -1,6 +1,7 @@
 package application;
 
 import model.entities.Reservation;
+import model.exceptions.DomainException;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -12,34 +13,30 @@ public class Main {
 
         DateTimeFormatter fmt1 = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
-        System.out.print("Room number:");
-        int number = sc.nextInt();
-        System.out.print("Check-in date (dd/MM/yyyy):");
-        LocalDate checkin = LocalDate.parse(sc.next(), fmt1);
-        System.out.print("Check-in date (dd/MM/yyyy):");
-        LocalDate checkout = LocalDate.parse(sc.next(), fmt1);
+        try {
+            System.out.print("Room number:");
+            int number = sc.nextInt();
+            System.out.print("Check-in date (dd/MM/yyyy):");
+            LocalDate checkin = LocalDate.parse(sc.next(), fmt1);
+            System.out.print("Check-in date (dd/MM/yyyy):");
+            LocalDate checkout = LocalDate.parse(sc.next(), fmt1);
 
-        if(!checkout.isAfter(checkin)){ //se checkout nao for depois de checkin
-            System.out.print("Error in reservation: check-out date must be after check-in date");
-        }else{
             Reservation reservation = new Reservation(number, checkin, checkout);
             System.out.println("Reservation: " + reservation);
 
             System.out.println();
-
             System.out.println("Enter data to update the reservation:");
             System.out.print("Check-in date (dd/MM/yyyy):");
             checkin = LocalDate.parse(sc.next(), fmt1);
             System.out.print("Check-in date (dd/MM/yyyy):");
             checkout = LocalDate.parse(sc.next(), fmt1);
 
-            String error = reservation.updateDates(checkin, checkout);
-            if (error != null){
-                System.out.println("Error in  reservation: " + error);
-            }else{
-                System.out.println("Reservation: " + reservation);
-            }
-
+            reservation.updateDates(checkin, checkout);
+            System.out.println("Reservation: " + reservation);
+        }catch(DomainException e){
+            System.out.println(e.getMessage());
+        }catch(RuntimeException e){
+            System.out.println("Unexpected error");
         }
 
         sc.close();
